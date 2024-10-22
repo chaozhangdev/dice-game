@@ -42,28 +42,45 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  // 新增变量以存储历史记录
+  List<int> _diceHistory = [];
+  int _totalRolls = 0; // 新增变量以存储总掷骰次数
+  double _averageRoll = 0.0; // 新增变量以存储平均掷骰结果
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _animation =
-        CurvedAnimation(parent: _controller, curve: Curves.linear); // 修改为线性动画
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.linear);
+  }
+
+  void _rollDice() {
+    setState(() {
+      _diceNumber = _random.nextInt(6) + 1;
+      _diceHistory.add(_diceNumber); // 记录每次掷骰子的结果
+      _totalRolls++; // 增加掷骰次数
+      _averageRoll =
+          _diceHistory.reduce((a, b) => a + b) / _totalRolls; // 计算平均值
+    });
+    _controller.forward(from: 0);
+  }
+
+  // 新增方法以清空历史记录
+  void _clearHistory() {
+    setState(() {
+      _diceHistory.clear();
+      _totalRolls = 0; // 重置掷骰次数
+      _averageRoll = 0.0; // 重置平均值
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  void _rollDice() {
-    setState(() {
-      _diceNumber = _random.nextInt(6) + 1;
-    });
-    _controller.forward(from: 0);
   }
 
   @override
@@ -128,6 +145,31 @@ class _MyHomePageState extends State<MyHomePage>
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(height: 20),
+              // 新增显示历史记录的文本
+              Text(
+                'History: ${_diceHistory.join(', ')}',
+                style: const TextStyle(fontSize: 18, color: Colors.amber),
+              ),
+              const SizedBox(height: 20),
+              // 新增显示总掷骰次数
+              Text(
+                'Total Rolls: $_totalRolls',
+                style: const TextStyle(fontSize: 18, color: Colors.amber),
+              ),
+              const SizedBox(height: 20),
+              // 新增显示平均掷骰结果
+              Text(
+                'Average Roll: ${_averageRoll.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 18, color: Colors.amber),
+              ),
+              const SizedBox(height: 20),
+              // 新增清空历史记录的按钮
+              ElevatedButton(
+                onPressed: _clearHistory,
+                child: const Text('Clear History'),
+                style: ElevatedButton.styleFrom(primary: Colors.amber),
               ),
             ],
           ),
