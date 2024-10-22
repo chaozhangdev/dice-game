@@ -49,7 +49,8 @@ class _MyHomePageState extends State<MyHomePage>
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.elasticOut);
+    _animation =
+        CurvedAnimation(parent: _controller, curve: Curves.linear); // 修改为线性动画
   }
 
   @override
@@ -98,8 +99,7 @@ class _MyHomePageState extends State<MyHomePage>
                     alignment: Alignment.center,
                     transform: Matrix4.identity()
                       ..setEntry(3, 2, 0.001)
-                      ..rotateX(_animation.value * 2 * pi)
-                      ..rotateY(_animation.value * 2 * pi),
+                      ..rotateZ(_animation.value * 2 * pi), // 修改为绕Z轴旋转
                     child: child,
                   );
                 },
